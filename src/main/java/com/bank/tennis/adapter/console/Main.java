@@ -1,6 +1,5 @@
-package com.bank;
+package com.bank.tennis.adapter.console;
 
-import com.bank.tennis.adapter.console.StdoutScore;
 import com.bank.tennis.application.BallWonCommand;
 import com.bank.tennis.application.TennisGameService;
 import com.bank.tennis.domain.Player;
