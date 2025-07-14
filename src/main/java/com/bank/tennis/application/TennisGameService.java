@@ -29,6 +29,17 @@ public final class TennisGameService {
             return;
         }
 
+        // DEUCE / ADVANTAGE
+        if (scoreA >= 3 && scoreB >= 3) {
+            if (scoreA == scoreB) {
+                output.display(new ScoreView("Deuce"));
+            } else {
+                Player adv = (scoreA > scoreB) ? Player.A : Player.B;
+                output.display(new ScoreView("Advantage Player " + adv.label()));
+            }
+            return;
+        }
+
         // ELSE DISPLAY CURRENT SCORE
         output.display(new ScoreView(
                 "A : " + label(scoreA) + " / B : " + label(scoreB)
