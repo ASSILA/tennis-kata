@@ -38,4 +38,29 @@ class TennisKataTest {
         assertEquals(expected,
                 scoreViews.stream().map(ScoreView::text).toList());
     }
+
+    @Test void ABABABBB_reaches_deuce_then_B_wins() {
+        List<ScoreView> scoreViews = new ArrayList<>();
+        ScorePort scoreCollector = scoreViews::add;
+        TennisGameService service = new TennisGameService(scoreCollector);
+
+        for (char c : "ABABABBB".toCharArray()) {
+            service.handle(new BallWonCommand(Player.fromChar(c)));
+            if (service.isFinished()) break;
+        }
+
+        List<String> expected = List.of(
+                "A : 15 / B : 0",
+                "A : 15 / B : 15",
+                "A : 30 / B : 15",
+                "A : 30 / B : 30",
+                "A : 40 / B : 30",
+                "Deuce",
+                "Advantage Player B",
+                "Player B wins the game"
+        );
+
+        assertEquals(expected,
+                scoreViews.stream().map(ScoreView::text).toList());
+    }
 }
