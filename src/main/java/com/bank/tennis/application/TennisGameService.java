@@ -1,14 +1,15 @@
 package com.bank.tennis.application;
 
 import com.bank.tennis.domain.Player;
+import com.bank.tennis.domain.Score;
 import com.bank.tennis.domain.ScoreView;
 import com.bank.tennis.port.ScorePort;
 
 public final class TennisGameService {
     private final ScorePort output;
 
-    private int scoreA = 0;
-    private int scoreB = 0;
+    private Score scoreA = Score.ZERO;
+    private Score scoreB = Score.ZERO;
     private boolean finished = false;
 
     public TennisGameService(ScorePort output) {
@@ -20,21 +21,25 @@ public final class TennisGameService {
         if (finished) return;
 
         // INCREMENT SCORE FOR WINNER
-        if (ballWonCommand.winner() == Player.A) scoreA++; else scoreB++;
+        if (ballWonCommand.winner() == Player.A) {
+            scoreA = scoreA.plusOne();
+        } else {
+            scoreB = scoreB.plusOne();
+        }
 
         // CHECK VICTORY
-        if ((scoreA >= 4 || scoreB >= 4) && Math.abs(scoreA - scoreB) >= 2) {
+        if ((scoreA.getValue() >= 4 || scoreB.getValue() >= 4) && Math.abs(scoreA.getValue() - scoreB.getValue()) >= 2) {
             finished = true;
             output.display(new ScoreView("Player " + ballWonCommand.winner() + " wins the game"));
             return;
         }
 
         // DEUCE / ADVANTAGE
-        if (scoreA >= 3 && scoreB >= 3) {
-            if (scoreA == scoreB) {
+        if (scoreA.getValue() >= 3 && scoreB.getValue() >= 3) {
+            if (scoreA.getValue() == scoreB.getValue()) {
                 output.display(new ScoreView("Deuce"));
             } else {
-                Player adv = (scoreA > scoreB) ? Player.A : Player.B;
+                Player adv = (scoreA.getValue() > scoreB.getValue()) ? Player.A : Player.B;
                 output.display(new ScoreView("Advantage Player " + adv.label()));
             }
             return;
@@ -42,7 +47,7 @@ public final class TennisGameService {
 
         // ELSE DISPLAY CURRENT SCORE
         output.display(new ScoreView(
-                "A : " + label(scoreA) + " / B : " + label(scoreB)
+                "A : " + scoreA.getLabel() + " / B : " + scoreB.getLabel()
         ));
     }
 
@@ -50,12 +55,4 @@ public final class TennisGameService {
         return finished;
     }
 
-    private static String label(int raw) {
-        return switch (raw) {
-            case 0 -> "0";
-            case 1 -> "15";
-            case 2 -> "30";
-            default -> "40";
-        };
-    }
 }
